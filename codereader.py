@@ -63,6 +63,9 @@ while True:
                 cv2.putText(scaledImg,"Processing time : "+str(round((time.time()-t)*1000,3))+"ms",(10,75),cv2.FONT_HERSHEY_TRIPLEX,0.6,(225,0,0),1)
                 print(str(count)+" saved code(s): "+codeData)
                 cv2.imwrite("saved/code"+str(count)+".jpg",scaledImg)
+            else:
+                cv2.putText(img,"Code"+str(registeredCodes.index(codeData)+1)+".jpg",(x,y),cv2.FONT_HERSHEY_PLAIN,1.7,(10,120,0),2)
+                
             
     cv2.putText(img,str(count)+" registered codes.",(10,25),cv2.FONT_HERSHEY_TRIPLEX,0.5,(125,0,0),1)
     cv2.imshow("Codes",img)

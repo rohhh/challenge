@@ -21,6 +21,7 @@ while True:
     imgGray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)  
 
     for barcode in decode(imgGray):
+        t=time.time()
         procDay=str(time.localtime()[2])+"/"+str(time.localtime()[1])+"/"+str(time.localtime()[0])
         procHour=str(time.localtime()[3])+":"+str(time.localtime()[4])+":"+str(time.localtime()[5])
         
@@ -52,8 +53,6 @@ while True:
                 cv2.line(img, pointsList[i], pointsList[i-1], (0, 125, 255), 1)
             cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
             cv2.rectangle(scaledImg, (addMarginL*scale, addMarginT*scale), ((addMarginL + w)*scale, (addMarginT + h)*scale), (255, 0, 0), 2)
-        cv2.putText(scaledImg,procDay+"-"+procHour,(10,25),cv2.FONT_HERSHEY_TRIPLEX,0.6,(225,0,0),1)
-        cv2.putText(scaledImg,barType+" : "+codeData,(10,50),cv2.FONT_HERSHEY_TRIPLEX,0.6,(225,0,0),1)
         #cv2.putText(img,procDay+"-"+procHour,(10,25),cv2.FONT_HERSHEY_TRIPLEX,0.5,(125,0,0),1)
         #cv2.putText(img,barType+" : "+codeData,(10,45),cv2.FONT_HERSHEY_TRIPLEX,0.5,(125,0,0),1)      
 #        cv2.imshow("Cropped",scaledImg)
@@ -62,12 +61,16 @@ while True:
         if codeData not in registeredCodes:
             registeredCodes.append(codeData)
             count += 1
+            cv2.putText(scaledImg,procDay+"-"+procHour,(10,25),cv2.FONT_HERSHEY_TRIPLEX,0.6,(225,0,0),1)
+            cv2.putText(scaledImg,barType+" : "+codeData,(10,50),cv2.FONT_HERSHEY_TRIPLEX,0.6,(225,0,0),1)
+            cv2.putText(scaledImg,"Processing time : "+str(round((time.time()-t)*1000,3))+"ms",(10,75),cv2.FONT_HERSHEY_TRIPLEX,0.6,(225,0,0),1)
             print(str(count)+" saved code(s): "+codeData)
             cv2.imwrite("saved/code"+str(count)+".jpg",scaledImg)
             #cv2.imwrite("saved/code"+str(count)+"_full.jpg",img)
             
     cv2.putText(img,str(count)+" registered codes.",(10,25),cv2.FONT_HERSHEY_TRIPLEX,0.5,(125,0,0),1)
     cv2.imshow("Codes",img)
+    #cv2.imshow("Codes gray",imgGray)
     cv2.waitKey(1)
     if cv2.waitKey(1) & 0xFF==ord('q'):
         break

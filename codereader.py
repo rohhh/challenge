@@ -43,30 +43,26 @@ while True:
         if x+w+addMarginR>img.shape[1]: addMarginR=0
         
         croppedImg = img[y-addMarginT:y+h+addMarginB,x-addMarginL:x+w+addMarginR]
-        scaledImg = cv2.resize(croppedImg,(croppedImg.shape[1]*scale,croppedImg.shape[0]*scale))
-        if barType=="QRCODE":
-            for i in range(len(pointsList)):
-                cv2.line(img, pointsList[i], pointsList[i-1], (255, 0, 0), 2)
-                cv2.line(scaledImg, ((pointsList[i][0]-x+addMarginL)*scale,(pointsList[i][1]-y+addMarginT)*scale), ((pointsList[i-1][0]-x+addMarginL)*scale,(pointsList[i-1][1]-y+addMarginT)*scale), (255, 0, 0), 2)     
-        else:
-            for i in range(len(pointsList)):
-                cv2.line(img, pointsList[i], pointsList[i-1], (0, 125, 255), 1)
-            cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
-            cv2.rectangle(scaledImg, (addMarginL*scale, addMarginT*scale), ((addMarginL + w)*scale, (addMarginT + h)*scale), (255, 0, 0), 2)
-        #cv2.putText(img,procDay+"-"+procHour,(10,25),cv2.FONT_HERSHEY_TRIPLEX,0.5,(125,0,0),1)
-        #cv2.putText(img,barType+" : "+codeData,(10,45),cv2.FONT_HERSHEY_TRIPLEX,0.5,(125,0,0),1)      
-#        cv2.imshow("Cropped",scaledImg)
-#        for i in range(len(pointsList)):
-#            cv2.line(img, pointsList[i], pointsList[i-1], (255, 0, 0), 2)
-        if codeData not in registeredCodes:
-            registeredCodes.append(codeData)
-            count += 1
-            cv2.putText(scaledImg,procDay+"-"+procHour,(10,25),cv2.FONT_HERSHEY_TRIPLEX,0.6,(225,0,0),1)
-            cv2.putText(scaledImg,barType+" : "+codeData,(10,50),cv2.FONT_HERSHEY_TRIPLEX,0.6,(225,0,0),1)
-            cv2.putText(scaledImg,"Processing time : "+str(round((time.time()-t)*1000,3))+"ms",(10,75),cv2.FONT_HERSHEY_TRIPLEX,0.6,(225,0,0),1)
-            print(str(count)+" saved code(s): "+codeData)
-            cv2.imwrite("saved/code"+str(count)+".jpg",scaledImg)
-            #cv2.imwrite("saved/code"+str(count)+"_full.jpg",img)
+        if croppedImg.shape[0]*croppedImg.shape[1]>0:
+            scaledImg = cv2.resize(croppedImg,(croppedImg.shape[1]*scale,croppedImg.shape[0]*scale))
+            if barType=="QRCODE":
+                for i in range(len(pointsList)):
+                    cv2.line(img, pointsList[i], pointsList[i-1], (255, 0, 0), 2)
+                    cv2.line(scaledImg, ((pointsList[i][0]-x+addMarginL)*scale,(pointsList[i][1]-y+addMarginT)*scale), ((pointsList[i-1][0]-x+addMarginL)*scale,(pointsList[i-1][1]-y+addMarginT)*scale), (255, 0, 0), 2)     
+            else:
+                for i in range(len(pointsList)):
+                    cv2.line(img, pointsList[i], pointsList[i-1], (0, 125, 255), 1)
+                cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
+                cv2.rectangle(scaledImg, (addMarginL*scale, addMarginT*scale), ((addMarginL + w)*scale, (addMarginT + h)*scale), (255, 0, 0), 2)
+
+            if codeData not in registeredCodes:
+                registeredCodes.append(codeData)
+                count += 1
+                cv2.putText(scaledImg,procDay+"-"+procHour,(10,25),cv2.FONT_HERSHEY_TRIPLEX,0.6,(225,0,0),1)
+                cv2.putText(scaledImg,barType+" : "+codeData,(10,50),cv2.FONT_HERSHEY_TRIPLEX,0.6,(225,0,0),1)
+                cv2.putText(scaledImg,"Processing time : "+str(round((time.time()-t)*1000,3))+"ms",(10,75),cv2.FONT_HERSHEY_TRIPLEX,0.6,(225,0,0),1)
+                print(str(count)+" saved code(s): "+codeData)
+                cv2.imwrite("saved/code"+str(count)+".jpg",scaledImg)
             
     cv2.putText(img,str(count)+" registered codes.",(10,25),cv2.FONT_HERSHEY_TRIPLEX,0.5,(125,0,0),1)
     cv2.imshow("Codes",img)
